@@ -64,7 +64,7 @@ ffmpeg -framerate 29.97 -i ./hdr_imgs/frame%06d.png -crf 0 -c:v libx265 -x265-pa
 
 `-pix_fmt yuv420p10`:将色域空间设为YUV，采样率为4:2:0，p10代表10bit
 
-`-tag:v hvc1`:标记CodeID为`hvc1`
+`-tag:v hvc1`:标记Codec ID为`hvc1`
 
 ## 截取电影的前50帧，并将分辨率降为1920x1080
 ```
