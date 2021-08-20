@@ -25,8 +25,8 @@ will copy all the streams except the second video, which will be encoded with li
 
 ## 将HDR视频转为SDR视频
 ```
-ffmpeg -i 原视频路径和格式 -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx265 -crf 18 -preset slower 更改后的视频路径和格式
-ffmpeg -i /Users/unbelievable/iCloudDrive/Desktop/龙/研究生学习/HDR视频/6_hdr.MOV -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx265 -crf 18 -preset slower /Users/unbelievable/iCloudDrive/Desktop/龙/研究生学习/HDR视频/6_sdr.mkv
+ffmpeg -i {hdr_input} -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx265 -crf 18 -preset slower {sdr_output}
+ffmpeg -i hdr_video.mp4 -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx265 -crf 18 -preset slower sdr_video.mp4
 ```
 
 ## 将视频帧转为图像
@@ -35,10 +35,30 @@ ffmpeg -i {input_path} -qscale:v 1 -qmin 1 -qmax 1 -vsync 0  frame%06d.png
 ```
 
 ## 将图像帧合成视频  
+```
+ffmpeg  -framerate 29.97 -i  frame%06d.png -b:v 1263k OUTPUT.mp4
+```
+`-framerate 29.97`:将视频帧率设为29.97
 将视频码率属性-b:v设为1263kb/s（具体设置按原视频码率设定）
+
+## 将16bit的PNG图像合成HDR视频
 ```
-ffmpeg  -framerate 29.97 -i  results/BasicVSR/frame%08d_BasicVSR.png -b:v 1263k results/BasicVSR_video/6_sdr_VSR.mp4
+ffmpeg -framerate 29.97 -i ./hdr_imgs/frame%05d.png -crf 0 -c:v libx265 -x265-params “colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc:master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(100000000,1)” -pix_fmt yuv420p10  -tag:v hvc1 6_img2hdr.mov
 ```
+`-x265-params`:specify libx265 encoding options with -x265-params
+   - `colorprim=bt2020`:色彩原色（Color primaries）设为bt2020
+   - `colormatrix=bt2020nc`:
+   - `transfer=arib-std-b67`:传输特性设为HLG
+    - `bt709`（sdr）
+	     -	BT 601, BT 709, BT 2020
+    - 	`smpte2084`（PQ，HDR10）
+    	 -	SMPTE ST 2084
+    -	`smpte2086`（PQ，HDR10+）
+      -		SMPTE ST 2086
+    -	`arib-std-b67`（HLG）
+      -		ARIB STD-B67
+   - `master-display`:
+     - Set the master key points. These points will define a second pass mapping. It is sometimes called a "luminance" or "value" mapping. It can be used with r, g, b or all since it acts like a post-processing LUT.
 
 ## 截取电影的前50帧，并将分辨率降为1920x1080
 ```
