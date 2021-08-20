@@ -26,6 +26,7 @@ will copy all the streams except the second video, which will be encoded with li
 ## 将HDR视频转为SDR视频
 ```
 ffmpeg -i {hdr_input} -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx265 -crf 18 -preset slower {sdr_output}
+#例：
 ffmpeg -i hdr_video.mp4 -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx265 -crf 18 -preset slower sdr_video.mp4
 ```
 
@@ -43,22 +44,27 @@ ffmpeg  -framerate 29.97 -i  frame%06d.png -b:v 1263k OUTPUT.mp4
 
 ## 将16bit的PNG图像合成HDR视频
 ```
-ffmpeg -framerate 29.97 -i ./hdr_imgs/frame%05d.png -crf 0 -c:v libx265 -x265-params “colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc:master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(100000000,1)” -pix_fmt yuv420p10  -tag:v hvc1 6_img2hdr.mov
+ffmpeg -framerate 29.97 -i ./hdr_imgs/frame%06d.png -crf 0 -c:v libx265 -x265-params “colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc:master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(100000000,1)” -pix_fmt yuv420p10  -tag:v hvc1 hdr.mp4
 ```
 `-x265-params`:specify libx265 encoding options with -x265-params
    - `colorprim=bt2020`:色彩原色（Color primaries）设为bt2020
    - `colormatrix=bt2020nc`:
    - `transfer=arib-std-b67`:传输特性设为HLG
-    - `bt709`（sdr）
-	     -	BT 601, BT 709, BT 2020
-    - 	`smpte2084`（PQ，HDR10）
-    	 -	SMPTE ST 2084
-    -	`smpte2086`（PQ，HDR10+）
-      -		SMPTE ST 2086
-    -	`arib-std-b67`（HLG）
-      -		ARIB STD-B67
-   - `master-display`:
-     - Set the master key points. These points will define a second pass mapping. It is sometimes called a "luminance" or "value" mapping. It can be used with r, g, b or all since it acts like a post-processing LUT.
+       - `bt709`（sdr）
+         - BT 601, BT 709, BT 2020
+       - `smpte2084`（PQ，HDR10）
+    	 - SMPTE ST 2084
+       - `smpte2086`（PQ，HDR10+）
+         - SMPTE ST 2086
+       - `arib-std-b67`（HLG）
+         - ARIB STD-B67
+   - `master-display`:G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)在色域舌头图上标定R、G、B和白点的值
+       - L(100000000,1):显示亮度设为0.0001:10000
+       - Set the master key points. These points will define a second pass mapping. It is sometimes called a "luminance" or "value" mapping. It can be used with 	r, g, b or all since it acts like a post-processing LUT.
+
+`-pix_fmt yuv420p10`:将色域空间设为YUV，采样率为4:2:0，p10代表10bit
+
+`-tag:v hvc1`:标记CodeID为`hvc1`
 
 ## 截取电影的前50帧，并将分辨率降为1920x1080
 ```
