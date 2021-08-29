@@ -81,3 +81,14 @@ ffmpeg -i input.mp4 -vcodec copy -an output.mp4
 ffmpeg -ss 00:00:15 -t 00:00:05 -i input.mp4 -vcodec copy -acodec copy output.mp4
 ```
 `-ss`表示开始切割的时间，`-t`表示要切多少。上面就是从15秒开始，切5秒钟出来。
+
+## HDR Video -> YUV
+```
+ffmpeg -i oHR_video.mov  HR.yuv
+```
+
+## 10bit YUV420 转 HDR video （HLG）
+HR.yuv -> HR_video.mp4
+```
+ffmpeg -s 1080x1920 -pix_fmt yuv420p10le -i HR.yuv -crf 0 -r 29.97 -c:v libx265 -x265-params “colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc” -pix_fmt yuv420p10le  -tag:v hvc1 HR.mp4
+```
