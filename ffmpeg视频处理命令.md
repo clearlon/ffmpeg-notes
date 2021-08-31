@@ -44,7 +44,7 @@ ffmpeg  -framerate 29.97 -i  frame%06d.png -b:v 1263k OUTPUT.mp4
 
 ## 将16bit的PNG图像合成HDR视频
 ```
-ffmpeg -framerate 29.97 -i ./hdr_imgs/frame%06d.png -crf 0 -c:v libx265 -x265-params “colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc:master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(100000000,1)” -pix_fmt yuv420p10  -tag:v hvc1 hdr.mp4
+ffmpeg -framerate 29.97 -i ./hdr_imgs/frame%06d.png -crf 0 -c:v libx265 -x265-params “colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc:master-display=G(8500,39850)B(6550,2300)R(35400,14600)WP(15635,16450)L(100000000,1)” -pix_fmt yuv420p10le  -tag:v hvc1 hdr.mp4
 ```
 `-x265-params`:specify libx265 encoding options with -x265-params
    - `colorprim=bt2020`:色彩原色（Color primaries）设为bt2020
