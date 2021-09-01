@@ -92,19 +92,17 @@ def main():
     Dy_frames, Du_frames, Dv_frames = YUVread_16bit(yuv_path, (1920,1080), frame_num=frames, start_frame=0, mode='420')
     #读取8bit的YUV
     # Dy_frames, Du_frames, Dv_frames = YUVread(yuv_path, (1080,1920), frame_num=frames, start_frame=0, mode='420')
-    with open(save_path, 'wb') as file:
-        for i in range(frames):
-            #U,V分量resize成Y的shape，以便进行矩阵运算
-            # Du = cv2.resize(Du_frames[i,:,:],(Du_frames.shape[2]*2,Du_frames.shape[1]*2),interpolation=cv2.INTER_NEAREST)
-            # Dv = cv2.resize(Dv_frames[i,:,:],(Dv_frames.shape[2]*2,Dv_frames.shape[1]*2),interpolation=cv2.INTER_NEAREST)
-            Du = ndimage.zoom(Du_frames[i,:,:], 2, order=0)
-            Dv = ndimage.zoom(Dv_frames[i,:,:], 2, order=0)
-            #YUV->RGB
-            Drgb = yuv2rgb_2020(Dy_frames[i,:,:], Du, Dv, yuv_bit_depth=10, quantification=8)
-            #Drgb = yuv2rgb_709_matrix(Dy_frames[i,:,:], Du, Dv)
-            cv2.imwrite(os.path.join(save_path, f'frame{i:03d}.png'), cv2.cvtColor(Drgb, cv2.COLOR_RGB2BGR))
-            print(f'已转换第{i}帧')
-    file.close()
+    for i in range(frames):
+        #U,V分量resize成Y的shape，以便进行矩阵运算
+        # Du = cv2.resize(Du_frames[i,:,:],(Du_frames.shape[2]*2,Du_frames.shape[1]*2),interpolation=cv2.INTER_NEAREST)
+        # Dv = cv2.resize(Dv_frames[i,:,:],(Dv_frames.shape[2]*2,Dv_frames.shape[1]*2),interpolation=cv2.INTER_NEAREST)
+        Du = ndimage.zoom(Du_frames[i,:,:], 2, order=0)
+        Dv = ndimage.zoom(Dv_frames[i,:,:], 2, order=0)
+        #YUV->RGB
+        Drgb = yuv2rgb_2020(Dy_frames[i,:,:], Du, Dv, yuv_bit_depth=10, quantification=8)
+        #Drgb = yuv2rgb_709_matrix(Dy_frames[i,:,:], Du, Dv)
+        cv2.imwrite(os.path.join(save_path, f'frame{i:03d}.png'), cv2.cvtColor(Drgb, cv2.COLOR_RGB2BGR))
+        print(f'已转换第{i}帧')
 
 if __name__ == '__main__':
     main()
