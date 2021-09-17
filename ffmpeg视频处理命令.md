@@ -92,3 +92,7 @@ HR.yuv -> HR_video.mp4
 ```
 ffmpeg -s 1080x1920 -pix_fmt yuv420p10le -i HR.yuv -crf 0 -r 29.97 -c:v libx265 -x265-params “colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc” -pix_fmt yuv420p10le  -tag:v hvc1 HR.mp4
 ```
+## 截取前50帧，并去掉音频
+```
+ffmpeg -i input.mov -vcodec copy -an -vframes 50 output.mov
+```
