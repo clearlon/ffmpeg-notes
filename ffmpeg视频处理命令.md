@@ -25,10 +25,12 @@ will copy all the streams except the second video, which will be encoded with li
 
 ## 将HDR视频转为SDR视频
 ```
-ffmpeg -i {hdr_input} -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx265 -crf 18 -preset slower {sdr_output}
+ffmpeg -i {hdr_input} -vf zscale=t=linear:npl=100,tonemap=tonemap=hable:desat=0,zscale=t=bt709:p=bt709:m=bt709:r=tv,format=yuv420p -c:v libx265 -crf 18 -preset slower {sdr_output}
 #例：
-ffmpeg -i hdr_video.mp4 -vf zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p -c:v libx265 -crf 18 -preset slower sdr_video.mp4
 ```
+`-preset`：Set the quality-speed tradeoff, in the range 0 to 8. Higher values are faster but lower quality. Defaults to 8 (highest speed). 越大的值转码越快但质量越差
+	ultrafast,superfast,veryfast,faster,fast,medium,slow,slower.veryslow
+
 
 ## 将视频帧转为图像
 ```
