@@ -68,7 +68,7 @@ ffmpeg -framerate 29.97 -i ./hdr_imgs/frame%06d.png -crf 0 -c:v libx265 -x265-pa
 
 `-tag:v hvc1`:标记Codec ID为`hvc1`
 
-## 截取电影的前50帧，并将分辨率降为1920x1080
+## 截取电影的前50帧，并将分辨率降为1920x1080(4K -> 1080)
 ```
 ffmpeg -i  INPUT  -vf  scale=270:480, setsar=1:1  OUTPUT  -hide_banner
 ffmpeg  -i  hdr.mkv  -vframes  50 -vf scale=1920:1080,setsar=1:1  hdr_1920x1080.mp4 -hide_banner
