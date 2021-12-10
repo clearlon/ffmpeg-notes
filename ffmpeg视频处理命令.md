@@ -36,7 +36,11 @@ ffmpeg -i {hdr_input} -vf zscale=t=linear:npl=100,tonemap=tonemap=hable:desat=0,
 ```
 ffmpeg -i {input_path} -qscale:v 1 -qmin 1 -qmax 1 -vsync 0  frame%06d.png
 ```
-
+## 将YUV文件转为图像
+```
+ffmpeg -s 1160x160 -pix_fmt yuv444p -i {INPUT} {frame%05d.png}
+ffmpeg -s 1160x160 -pix_fmt yuv444p10 -i {INPUT} {frame%05d.png}
+```
 ## 将图像帧合成视频  
 ```
 ffmpeg  -framerate 29.97 -i  frame%06d.png -b:v 1263k OUTPUT.mp4
